@@ -1,4 +1,4 @@
-function RedditService(http) { // $ removed from $http to show that it is possible to rename
+function RedditService($http) { // $ removed from $http to show that it is possible to rename
   const service = this;
     
   /**
@@ -7,10 +7,12 @@ function RedditService(http) { // $ removed from $http to show that it is possib
     */
     
      service.fetchAwwSubreddit = () => {
-      // $http stuff goes here
-      // call to reddit API goes here, retur back to redditFeed controller
-    }
-
+        // $http stuff goes here
+        // https://www.reddit.com/r/aww/.json
+        // call to reddit API goes here, return back to redditFeed controller
+        return $http.get('https://www.reddit.com/r/aww/.json');
+      };
+      
 }
 
 angular.module('RedditApp')
