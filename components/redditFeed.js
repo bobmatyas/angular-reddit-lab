@@ -1,4 +1,4 @@
-function RedditFeed(RedditService) {
+function RedditFeed(RedditService, $q) {
   // have to add $q to use promises 
 
     const ctrl = this;
@@ -12,34 +12,26 @@ function RedditFeed(RedditService) {
 
    
     ctrl.fetchAwwSubreddit = () => {
-     // have to pass in $q at top for this to work
-     // return $q(function (resolve, reject) {
-     // then( (response) => {
-     // put code here 
-     /// resolve();
 
+      return $q(function(resolve, reject) {
         RedditService.fetchAwwSubreddit()
-          .then( (data) => {
-            // do something with this data
-            
-            ctrl.feed = data;
-            
+          .then( (response) => {
+
+            ctrl.feed = response;
             ctrl.arrayToLoad = [];
 
-            data.data.data.children.slice(1, 11).forEach( (child) => {
-        
+            response.data.data.children.slice(1, 11).forEach( (child) => {
               // skipped the first post which is just an ad for a random sub-reddit
               
-              //  setting up and formating the post date
-
+              //format the post date
               let redditPostDate = new Date();
               redditPostDate.setTime(child.data.created*1000);
               let dateString = redditPostDate.toLocaleString();
-      
-              //create an object of the current post 
-
+                     
+              //modify permalink to add reddit link 
               let realPermalink = `https://www.reddit.com/${child.data.permalink}`;
 
+              //create an object of the current post
               let childObj = {
                 title: child.data.title,
                 thumbnail: child.data.thumbnail,
@@ -48,30 +40,26 @@ function RedditFeed(RedditService) {
               }
 
               // add post information to array to be parsed later
-
               ctrl.arrayToLoad.push(childObj);
                 
             });
-            
+            resolve();
+          })
           
-          });
+
+      });
+
+        
     }
   }
   
   angular.module('RedditApp').component('redditFeed', {
     template: `
-      
-
-      <h2>component test</h2>
-
       <div data-ng-repeat="post in $ctrl.arrayToLoad">
-        
         <h2> {{ post.title }}</h2>
         {{ post.thumnail }}
         <img src="{{ post.thumbnail }}" />
-
         {{ post.postDate }}
-
         {{ post.permalink }}
       </div>
    `, // or use templateUrl
