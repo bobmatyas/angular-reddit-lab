@@ -10,7 +10,16 @@ function RedditFeed(RedditService, $q) {
       ctrl.fetchAwwSubreddit();
     };
 
-   
+    
+    ctrl.truncateString = function(str, num) {
+      if (str.length > num) {
+        return str.slice(0, num) + "...";
+      } else {
+        return str; 
+      }
+    }
+
+
     ctrl.fetchAwwSubreddit = () => {
 
       return $q(function(resolve, reject) {
@@ -31,9 +40,12 @@ function RedditFeed(RedditService, $q) {
               //modify permalink to add reddit link 
               let realPermalink = `https://www.reddit.com/${child.data.permalink}`;
 
+              //cut title to a more managble length for predictability
+              let postTitle = ctrl.truncateString(child.data.title, 90);
+
               //create an object of the current post
               let childObj = {
-                title: child.data.title,
+                title: postTitle,
                 thumbnail: child.data.thumbnail,
                 permalink: realPermalink,
                 postDate: dateString
@@ -45,7 +57,10 @@ function RedditFeed(RedditService, $q) {
             });
             resolve();
           })
-          
+          .catch( function(error) {
+            console.error(error);
+            throw error;
+          });
 
       });
 
@@ -55,13 +70,15 @@ function RedditFeed(RedditService, $q) {
   
   angular.module('RedditApp').component('redditFeed', {
     template: `
-      <div data-ng-repeat="post in $ctrl.arrayToLoad">
-        <h2> {{ post.title }}</h2>
-        {{ post.thumnail }}
-        <img src="{{ post.thumbnail }}" />
-        {{ post.postDate }}
-        {{ post.permalink }}
+    <a href="{{ post.permalink }}" data-ng-repeat="post in $ctrl.arrayToLoad" class="reddit-post-link">
+      <div class="reddit-post-block">  
+        <div class="reddit-post-block-inner">
+          <h2 class="reddit-post-title"> {{ post.title }}</h2>
+          <img src="{{ post.thumbnail }}" class="reddit-post-image" alt="photo: {{ post.title }}" />
+          <p class="reddit-post-date">Posted: {{ post.postDate }}</p>
+        </div>
       </div>
+    </a>
    `, // or use templateUrl
     controller: RedditFeed,
 });
