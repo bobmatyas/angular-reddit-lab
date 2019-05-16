@@ -1,8 +1,15 @@
 # Grand Circus AngularJS Reddit Lab
 
+View completed project:
+
+https://bobmatyas.github.io/angular-reddit-lab/
+
+## Project Requirements
+
 Task: Create a webpage that displays the posts from the AWW Subreddit.
 
 Build Specifications
+
 1. Create an RedditService with a fetchAwwSubreddit() method. Use $http to request data
 from the https://www.reddit.com/r/aww/.json API.
 2. Create a redditFeed component that calls the fetchAwwSubreddit method and displays
